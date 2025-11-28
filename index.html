@@ -37,7 +37,7 @@
     }
 
     /* Neon frame glow */
-    .card::before{content:"";position:absolute;inset:-6px;border-radius:calc(var(--radius) + 6px);padding:1px;background:linear-gradient(90deg,var(--accent),var(--accent-2));filter:blur(26px);z-index:-1;pointer-events:none;opacity:0.95}
+    .card::before{content:"";position:absolute;inset:-12px;border-radius:calc(var(--radius) + 12px);padding:3px;background:linear-gradient(90deg,#00f0d6,#6b6eff);filter:blur(60px);opacity:1;z-index:-1;pointer-events:none;box-shadow:0 0 80px rgba(0,240,214,1),0 0 120px rgba(107,110,255,1);}
     .card::after{content:"";position:absolute;inset:6px;border-radius:calc(var(--radius) - 6px);background:transparent;z-index:-2;pointer-events:none}
 
     .avatar{
@@ -49,10 +49,10 @@
     @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
     @keyframes pulse{0%{filter:blur(8px);opacity:0.85}50%{filter:blur(18px);opacity:1}100%{filter:blur(8px);opacity:0.85}}
 
-    h1{font-size:28px;color:var(--accent-2);text-align:center;margin:6px 0 4px;letter-spacing:0.2px}
-    h1 .spark{color:var(--accent);margin-left:6px}
+    h1{font-size:28px;color:#ffffff;text-align:center;margin:6px 0 4px;letter-spacing:0.2px}
+    h1 .spark{color:#ffffff;margin-left:6px}
 
-    p.lead{line-height:1.6;text-align:center;color:#cbd2d6;margin:4px 8px 16px;font-size:15px}
+    p.lead{line-height:1.6;text-align:center;color:#cbd2d6;margin:4px 8px 16px;font-size:15px;font-weight:700}
 
     .cta{ display:flex; justify-content:center; position:relative; z-index:3; }
     .btn{ position:relative; z-index:4; 
