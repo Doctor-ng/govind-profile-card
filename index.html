@@ -18,7 +18,7 @@
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     }
 
-    html,body{height:100%;overflow:hidden;} 
+    html,body{height:100%;overflow:hidden;}
     body{
       margin:0;min-height:100%;background:radial-gradient( circle at 10% 10%, rgba(107,110,255,0.06) 0%, transparent 15%), radial-gradient(circle at 90% 90%, rgba(0,240,214,0.04) 0%, transparent 15%), var(--bg);
       color:var(--muted);display:flex;align-items:center;justify-content:center;padding:28px;}
@@ -28,16 +28,18 @@
 
     .no-select{user-select:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;}
 
-.wrap{position:relative;z-index:2;max-width:420px;width:100%;} 
+    .wrap{position:relative;z-index:2;max-width:420px;width:100%;}
 
-    .card{ position:relative; z-index:1; 
+    .card{
+      position:relative; z-index:1;
       background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
       border-radius:var(--radius);padding:34px;border:1px solid rgba(255,255,255,0.03);
-      box-shadow:0 10px 40px rgba(,6,10,0.6), 0 0 36px rgba(0,240,214,0.06) inset;position:relative;overflow:hidden;transform:translate3d(0,0,0);
+      box-shadow:0 10px 40px rgba(0,6,10,0.6), 0 0 36px rgba(0,240,214,0.06) inset;
+      overflow:hidden;transform:translate3d(0,0,0);
     }
 
     /* Neon frame glow */
-    .card::before{content:"";position:absolute;inset:-12px;border-radius:calc(var(--radius) + 12px);padding:3px;background:linear-gradient(90deg,#00f0d6,#6b6eff);filter:blur(60px);opacity:1;z-index:-1;pointer-events:none;box-shadow:0 0 80px rgba(0,240,214,1),0 0 120px rgba(107,110,255,1);}
+    .card::before{content:"";position:absolute;inset:-12px;border-radius:calc(var(--radius) + 12px);padding:3px;background:linear-gradient(90deg,#00f0d6,#6b6eff);filter:blur(60px);opacity:1;z-index:-1;pointer-events:none;box-shadow:0 0 80px rgba(0,240,214,1),0 0 120px rgba(107,110,255,1);}    
     .card::after{content:"";position:absolute;inset:6px;border-radius:calc(var(--radius) - 6px);background:transparent;z-index:-2;pointer-events:none}
 
     .avatar{
@@ -69,22 +71,28 @@
 
     /* small floating accent */
     .floating{
-  position:absolute;
-  inset:auto 14px 14px 14px;
-  height:64px;
-  border-radius:12px;
-  background:linear-gradient(90deg, rgba(107,110,255,0.06), rgba(0,240,214,0.06));
-  backdrop-filter:blur(6px);
-  border:1px solid rgba(255,255,255,0.02);
-  pointer-events:none;
-  z-index:0;
-}
+      position:absolute;
+      inset:auto 14px 14px 14px;
+      height:64px;
+      border-radius:12px;
+      background:linear-gradient(90deg, rgba(107,110,255,0.06), rgba(0,240,214,0.06));
+      backdrop-filter:blur(6px);
+      border:1px solid rgba(255,255,255,0.02);
+      pointer-events:none;
+      z-index:0;
+    }
 
     /* responsive tweaks */
     @media (max-width:420px){.card{padding:24px}.avatar{width:100px;height:100px}}
 
     /* accessibility: reduce motion */
     @media (prefers-reduced-motion: reduce){.avatar .ring, #bg-canvas, .card::before{animation:none;transition:none}}
+
+    /* music button styles to match card theme */
+    #musicBtn{position:fixed;bottom:18px;right:18px;width:56px;height:56px;border-radius:50%;background:linear-gradient(90deg, rgba(107,110,255,0.06), rgba(0,240,214,0.06));backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:20px;color:#ffffff;cursor:pointer;z-index:999;box-shadow:0 10px 30px rgba(107,110,255,0.08);pointer-events:auto;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+    #musicBtn.playing{background:linear-gradient(90deg,#6b6eff,#00f0d6);box-shadow:0 10px 60px rgba(107,110,255,0.25),0 0 40px rgba(0,240,214,0.18)}
+    #musicBtn svg{display:block}
+
   </style>
 </head>
 <body>
@@ -186,6 +194,66 @@
       canvas.style.display='none';
       card.style.transform='none';
     }
+  </script>
+
+  <!-- Music control: place your audio file 'bgm.mp3' in the same folder -->
+
+  <button id="musicBtn" aria-label="Play background music" title="Play background music" type="button">
+    <svg id="musicIcon" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"></svg>
+  </button>
+
+  <audio id="bgm" loop>
+    <source src="bgm.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('musicBtn');
+      const icon = document.getElementById('musicIcon');
+      const audio = document.getElementById('bgm');
+      let playing = false;
+
+      function setIcon(isPlaying){
+        if(isPlaying){
+          // speaker with waves (unmuted)
+          icon.innerHTML = '<path d="M5 9v6h4l5 5V4L9 9H5z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"></path><path d="M16 11c.5.7 1 1.5 1 3s-.5 2.3-1 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path>';
+          btn.classList.add('playing');
+          btn.setAttribute('aria-label','Mute background music');
+        } else {
+          // muted speaker (with improved X overlay positioned correctly)
+          icon.innerHTML = '<path d="M5 9v6h4l5 5V4L9 9H5z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"></path> <path d="M17 7 L21 11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M21 7 L17 11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>';
+          btn.classList.remove('playing');
+          btn.setAttribute('aria-label','Play background music');
+        }
+      }
+
+      // initial state: not playing (user must tap)
+      setIcon(false);
+
+      btn.addEventListener('pointerdown', async function(e){
+        e.preventDefault();
+        try{
+          if(!playing){
+            await audio.play();
+            playing = true;
+            setIcon(true);
+          } else {
+            audio.pause();
+            audio.currentTime = 0;
+            playing = false;
+            setIcon(false);
+          }
+        }catch(err){
+          console.warn('Audio play failed', err);
+        }
+      });
+
+      // pause if user navigates away
+      document.addEventListener('visibilitychange', ()=>{
+        if(document.hidden && playing){ audio.pause(); playing = false; setIcon(false); }
+      });
+    })();
   </script>
 </body>
 </html>
