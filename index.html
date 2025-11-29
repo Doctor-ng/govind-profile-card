@@ -175,14 +175,20 @@
     draw();
 
     // tiny motion to card on mouse tilt (parallax)
-    const card = document.querySelector('.card');
-    window.addEventListener('pointermove', e=>{
-      const cx = window.innerWidth/2; const cy = window.innerHeight/2;
-      const dx = (e.clientX - cx)/cx; const dy = (e.clientY - cy)/cy;
-      card.style.transform = `translate3d(${dx*8}px, ${dy*6}px, 0) rotateX(${dy*2}deg) rotateY(${dx*2}deg)`;
-    });
+// Enable only on devices with a precise pointer (mouse) to avoid unwanted motion on touch devices
+const card = document.querySelector('.card');
+if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+  window.addEventListener('pointermove', e=>{
+    const cx = window.innerWidth/2; const cy = window.innerHeight/2;
+    const dx = (e.clientX - cx)/cx; const dy = (e.clientY - cy)/cy;
+    card.style.transform = `translate3d(${dx*8}px, ${dy*6}px, 0) rotateX(${dy*2}deg) rotateY(${dx*2}deg)`;
+  });
+} else {
+  // on touch devices, keep the card static
+  card.style.transform = 'none';
+}
 
-    // ensure the CTA anchor works even if some overlay exists
+// ensure the CTA anchor works even if some overlay exists
     document.getElementById('contactBtn').addEventListener('click', function(e){
       // no JS navigation needed; anchor will open link. This ensures nothing prevents the click.
       // keep for future analytics hooks.
