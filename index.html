@@ -57,9 +57,10 @@
     p.lead{line-height:1.6;text-align:center;color:#cbd2d6;margin:4px 8px 16px;font-size:15px;font-weight:700}
 
     .cta{ display:flex; justify-content:center; position:relative; z-index:3; }
-    .btn{ position:relative; z-index:4; 
-      display:inline-flex;align-items:center;gap:10px;padding:12px 22px;border-radius:999px;background:linear-gradient(90deg,var(--accent-2),var(--accent));color:#061017;font-weight:700;text-decoration:none;border:none;cursor:pointer;box-shadow:0 8px 30px rgba(107,110,255,0.08), 0 2px 0 rgba(0,0,0,0.3) inset;transition:transform .18s ease,box-shadow .18s ease;}
-    .btn:active{transform:translateY(1px)}
+    .btn{ position:relative; z-index:4; display:inline-flex;align-items:center;gap:12px;padding:10px 18px;border-radius:14px;background:linear-gradient(90deg,var(--accent-2),var(--accent));color:#061017;font-weight:700;text-decoration:none;border:none;cursor:pointer;box-shadow:0 8px 30px rgba(107,110,255,0.08), 0 2px 0 rgba(0,0,0,0.3) inset;transition:transform .12s ease,box-shadow .12s ease,opacity .12s ease;}
+    .btn:active{transform:translateY(1px) scale(0.98)}
+    .btn.tapped{transform:translateY(3px) scale(0.96);box-shadow:0 6px 18px rgba(107,110,255,0.06) inset;opacity:0.98}
+    .btn img.icon{width:20px;height:20px;display:block;border-radius:4px}
     .btn:hover{transform:translateY(-4px);box-shadow:0 18px 54px rgba(107,110,255,0.12), 0 8px 0 rgba(0,0,0,0.35) inset}
 
     footer{margin-top:18px;text-align:center;color:#8f9599;font-size:13px}
@@ -110,11 +111,12 @@
 
       <div class="cta">
         <a class="btn" id="contactBtn" href="https://t.me/DoctorEX0" target="_blank" rel="noopener noreferrer" aria-label="Contact on Telegram">
-          ⚡ Contact on Telegram
+          <img src="telegram.svg" alt="Telegram" class="icon">
+          <span>⚡ Contact on Telegram</span>
         </a>
       </div>
 
-      <div class="floating" aria-hidden="true"></div>
+      
     </div>
     <footer>© 2025 Gᴏᴠɪɴᴅ ! 𐂂 ✦ All Rights Reserved</footer>
   </div>
@@ -189,10 +191,15 @@ if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
 }
 
 // ensure the CTA anchor works even if some overlay exists
-    document.getElementById('contactBtn').addEventListener('click', function(e){
-      // no JS navigation needed; anchor will open link. This ensures nothing prevents the click.
-      // keep for future analytics hooks.
-    });
+    const contactBtn = document.getElementById('contactBtn');
+    if(contactBtn){
+      // add tap animation for both pointer and keyboard/enter
+      contactBtn.addEventListener('pointerdown', e=>{ contactBtn.classList.add('tapped'); });
+      contactBtn.addEventListener('pointerup', e=>{ setTimeout(()=>contactBtn.classList.remove('tapped'),120); });
+      contactBtn.addEventListener('pointerleave', e=>{ contactBtn.classList.remove('tapped'); });
+      contactBtn.addEventListener('keydown', e=>{ if(e.key==='Enter' || e.key===' ') { contactBtn.classList.add('tapped'); setTimeout(()=>contactBtn.classList.remove('tapped'),150); } });
+    }
+    // keep for future analytics hooks.
 
     // reduce motion respect
     if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
